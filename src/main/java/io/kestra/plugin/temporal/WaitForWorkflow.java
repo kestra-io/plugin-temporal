@@ -60,7 +60,7 @@ import java.util.Set;
                     workflowId: "{{ outputs.trigger.workflowId }}"
                     runId: "{{ outputs.trigger.runId }}"
                     pollInterval: "PT5S"
-                    timeout: "PT1H"
+                    waitTimeout: "PT1H"
                 """
         )
     }
@@ -101,10 +101,14 @@ public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTas
 
     @Schema(
         title = "Maximum wait time.",
-        description = "Total time to wait before the task times out. Defaults to 1 hour."
+        description = """
+            Total time to wait before giving up. Defaults to 1 hour.
+            Named waitTimeout because timeout is a reserved Kestra task property
+            that kills the task run instead of returning an output.
+            """
     )
     @PluginProperty(group = "reliability")
-    private Property<Duration> timeout;
+    private Property<Duration> waitTimeout;
 
     @Schema(
         title = "Fail if the workflow ends in a non-COMPLETED state.",
@@ -124,7 +128,7 @@ public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTas
             .orElseThrow(() -> new IllegalArgumentException("workflowId is required"));
         var rRunId            = runContext.render(runId).as(String.class).orElse(null);
         var rPollInterval     = runContext.render(pollInterval).as(Duration.class).orElse(Duration.ofSeconds(5));
-        var rTimeout          = runContext.render(timeout).as(Duration.class).orElse(Duration.ofHours(1));
+        var rTimeout          = runContext.render(waitTimeout).as(Duration.class).orElse(Duration.ofHours(1));
         var rFailOnNonCompleted = runContext.render(failOnNonCompleted).as(Boolean.class).orElse(true);
 
         var logger = runContext.logger();

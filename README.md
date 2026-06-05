@@ -72,7 +72,7 @@ tasks:
     workflowId: "{{ outputs.trigger.workflowId }}"
     runId: "{{ outputs.trigger.runId }}"
     pollInterval: "PT5S"
-    timeout: "PT1H"
+    waitTimeout: "PT1H"
 ```
 
 ## Integration tests

@@ -61,7 +61,7 @@ class WaitForWorkflowTest {
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue(workflowId))
             .pollInterval(Property.ofValue(Duration.ofMillis(200)))
-            .timeout(Property.ofValue(Duration.ofSeconds(30)))
+            .waitTimeout(Property.ofValue(Duration.ofSeconds(30)))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -89,7 +89,7 @@ class WaitForWorkflowTest {
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue(workflowId))
             .pollInterval(Property.ofValue(Duration.ofMillis(200)))
-            .timeout(Property.ofValue(Duration.ofSeconds(30)))
+            .waitTimeout(Property.ofValue(Duration.ofSeconds(30)))
             .failOnNonCompleted(Property.ofValue(false))
             .build();
 
@@ -106,7 +106,7 @@ class WaitForWorkflowTest {
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue("no-such-workflow-" + UUID.randomUUID()))
             .pollInterval(Property.ofValue(Duration.ofMillis(100)))
-            .timeout(Property.ofValue(Duration.ofMillis(300)))
+            .waitTimeout(Property.ofValue(Duration.ofMillis(300)))
             .failOnNonCompleted(Property.ofValue(true))
             .build();
 
