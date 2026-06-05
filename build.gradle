@@ -59,13 +59,15 @@ dependencies {
  * Test
  **********************************************************************************************************************/
 
-// grpc-protobuf 1.76.x (enforced by Kestra platform) is compiled against protobuf 4.x APIs.
-// Temporal's TestWorkflowEnvironment triggers the StatusProto initializer which requires
-// RuntimeVersion$RuntimeDomain from protobuf 4.x. Forcing protobuf-java to 4.33.2 in the
-// test classpath resolves the NoClassDefFoundError without affecting the production jar.
-configurations.testRuntimeClasspath {
-    resolutionStrategy.force "com.google.protobuf:protobuf-java:4.33.2"
-    resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.33.2"
+// grpc-protobuf 1.76.x and proto-google-common-protos 2.65.x (enforced by Kestra platform)
+// are compiled against protobuf 4.x APIs, while the platform pins protobuf-java to 3.25.x.
+// Mixing them causes a VerifyError (com.google.rpc.Status vs protobuf 3.25 Any) at runtime
+// and a NoClassDefFoundError (RuntimeVersion$RuntimeDomain) in tests. Force protobuf 4.x on
+// both the test classpath and the runtime classpath that feeds the shadow jar. The plugin
+// classloader is child-first, so the bundled protobuf 4.x never leaks into Kestra core.
+[configurations.testRuntimeClasspath, configurations.runtimeClasspath].each { cfg ->
+    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java:4.33.2"
+    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.33.2"
 }
 
 test {
