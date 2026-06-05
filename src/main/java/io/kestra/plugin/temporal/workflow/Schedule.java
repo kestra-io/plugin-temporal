@@ -1,4 +1,6 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.AbstractTemporalTask;
 
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
@@ -40,7 +42,7 @@ import java.util.List;
 
                 tasks:
                   - id: schedule
-                    type: io.kestra.plugin.temporal.ScheduleWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Schedule
                     endpoint: "localhost:7233"
                     scheduleId: "daily-report"
                     cron: "0 9 * * *"
@@ -59,7 +61,7 @@ import java.util.List;
 
                 tasks:
                   - id: schedule
-                    type: io.kestra.plugin.temporal.ScheduleWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Schedule
                     endpoint: "localhost:7233"
                     scheduleId: "heartbeat-check"
                     intervalSeconds: 300
@@ -70,7 +72,7 @@ import java.util.List;
         )
     }
 )
-public class ScheduleWorkflow extends AbstractTemporalTask implements RunnableTask<ScheduleWorkflow.Output> {
+public class Schedule extends AbstractTemporalTask implements RunnableTask<Schedule.Output> {
 
     @Schema(
         title = "Schedule ID.",
@@ -170,7 +172,8 @@ public class ScheduleWorkflow extends AbstractTemporalTask implements RunnableTa
                 .setArguments(rArgs.toArray())
                 .build();
 
-            var schedule = Schedule.newBuilder()
+            // fully qualified: this task class shadows the SDK's Schedule type
+            var schedule = io.temporal.client.schedules.Schedule.newBuilder()
                 .setAction(action)
                 .setSpec(spec)
                 .build();
@@ -187,7 +190,7 @@ public class ScheduleWorkflow extends AbstractTemporalTask implements RunnableTa
                 }
                 var handle = scheduleClient.getHandle(rScheduleId);
                 handle.update(input -> new ScheduleUpdate(
-                    Schedule.newBuilder(input.getDescription().getSchedule())
+                    io.temporal.client.schedules.Schedule.newBuilder(input.getDescription().getSchedule())
                         .setSpec(spec)
                         .setAction(action)
                         .build()

@@ -1,4 +1,7 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.TemporalTestServer;
+import io.kestra.plugin.temporal.TestWorkflows;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
@@ -15,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 @KestraTest
-class SignalWorkflowTest {
+class SignalTest {
 
     private static final String TASK_QUEUE = "test-signal-" + UUID.randomUUID();
 
@@ -51,9 +54,9 @@ class SignalWorkflowTest {
         // Fire-and-forget so the workflow stays in RUNNING state while we signal it.
         WorkflowClient.start(stub::run);
 
-        var task = SignalWorkflow.builder()
+        var task = Signal.builder()
             .id("signal-" + UUID.randomUUID())
-            .type(SignalWorkflow.class.getName())
+            .type(Signal.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue(workflowId))
             .signalName(Property.ofValue("unlock"))
@@ -66,9 +69,9 @@ class SignalWorkflowTest {
 
     @Test
     void nonExistentWorkflow_throwsWithClearMessage() {
-        var task = SignalWorkflow.builder()
+        var task = Signal.builder()
             .id("signal-missing-" + UUID.randomUUID())
-            .type(SignalWorkflow.class.getName())
+            .type(Signal.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue("non-existent-" + UUID.randomUUID()))
             .signalName(Property.ofValue("unlock"))

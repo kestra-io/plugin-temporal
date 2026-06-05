@@ -24,11 +24,11 @@ Kestra tasks for interacting with [Temporal](https://temporal.io) workflow orche
 
 | Task | Purpose |
 |---|---|
-| `TriggerWorkflow` | Start a new Temporal workflow execution |
-| `SignalWorkflow` | Send a signal to a running workflow |
-| `QueryWorkflow` | Query a running workflow and return the result as JSON |
-| `WaitForWorkflow` | Poll until a workflow reaches a terminal state |
-| `ScheduleWorkflow` | Create or update a Temporal schedule |
+| `Trigger` | Start a new Temporal workflow execution |
+| `Signal` | Send a signal to a running workflow |
+| `Query` | Query a running workflow and return the result as JSON |
+| `Wait` | Poll until a workflow reaches a terminal state |
+| `Schedule` | Create or update a Temporal schedule |
 
 ## Connection
 
@@ -52,7 +52,7 @@ namespace: company.team
 
 tasks:
   - id: trigger
-    type: io.kestra.plugin.temporal.TriggerWorkflow
+    type: io.kestra.plugin.temporal.workflow.Trigger
     endpoint: "localhost:7233"
     workflowType: "OrderWorkflow"
     taskQueue: "order-queue"
@@ -61,13 +61,13 @@ tasks:
       - '{"orderId": "ORD-123"}'
 
   - id: approve
-    type: io.kestra.plugin.temporal.SignalWorkflow
+    type: io.kestra.plugin.temporal.workflow.Signal
     endpoint: "localhost:7233"
     workflowId: "{{ outputs.trigger.workflowId }}"
     signalName: "approve"
 
   - id: wait
-    type: io.kestra.plugin.temporal.WaitForWorkflow
+    type: io.kestra.plugin.temporal.workflow.Wait
     endpoint: "localhost:7233"
     workflowId: "{{ outputs.trigger.workflowId }}"
     runId: "{{ outputs.trigger.runId }}"
@@ -77,7 +77,7 @@ tasks:
 
 ## Integration tests
 
-`ScheduleWorkflow` tests require a real Temporal server. To run them:
+`Schedule` tests require a real Temporal server. To run them:
 
 ```bash
 docker compose -f docker-compose-ci.yml up -d

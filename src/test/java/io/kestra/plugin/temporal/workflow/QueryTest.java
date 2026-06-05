@@ -1,4 +1,7 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.TemporalTestServer;
+import io.kestra.plugin.temporal.TestWorkflows;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
@@ -14,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @KestraTest
-class QueryWorkflowTest {
+class QueryTest {
 
     private static final String TASK_QUEUE = "test-query-" + UUID.randomUUID();
 
@@ -49,9 +52,9 @@ class QueryWorkflowTest {
         );
         WorkflowClient.start(stub::run);
 
-        var task = QueryWorkflow.builder()
+        var task = Query.builder()
             .id("query-" + UUID.randomUUID())
-            .type(QueryWorkflow.class.getName())
+            .type(Query.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue(workflowId))
             .queryType(Property.ofValue("getStatus"))
@@ -65,9 +68,9 @@ class QueryWorkflowTest {
 
     @Test
     void nonExistentWorkflow_throwsWithClearMessage() {
-        var task = QueryWorkflow.builder()
+        var task = Query.builder()
             .id("query-missing-" + UUID.randomUUID())
-            .type(QueryWorkflow.class.getName())
+            .type(Query.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue("non-existent-" + UUID.randomUUID()))
             .queryType(Property.ofValue("getStatus"))

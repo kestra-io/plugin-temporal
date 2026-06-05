@@ -1,4 +1,7 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.TemporalTestServer;
+import io.kestra.plugin.temporal.TestWorkflows;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
@@ -13,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @KestraTest
-class TriggerWorkflowTest {
+class TriggerTest {
 
     private static final String TASK_QUEUE = "test-trigger-" + UUID.randomUUID();
 
@@ -40,9 +43,9 @@ class TriggerWorkflowTest {
 
     @Test
     void happyPath_startsWorkflowAndReturnsIds() throws Exception {
-        var task = TriggerWorkflow.builder()
+        var task = Trigger.builder()
             .id("trigger-" + UUID.randomUUID())
-            .type(TriggerWorkflow.class.getName())
+            .type(Trigger.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowType(Property.ofValue("GreetingWorkflow"))
             .taskQueue(Property.ofValue(TASK_QUEUE))
@@ -58,9 +61,9 @@ class TriggerWorkflowTest {
     @Test
     void customWorkflowId_isPreservedInOutput() throws Exception {
         var customId = "my-workflow-" + UUID.randomUUID();
-        var task = TriggerWorkflow.builder()
+        var task = Trigger.builder()
             .id("trigger-custom-" + UUID.randomUUID())
-            .type(TriggerWorkflow.class.getName())
+            .type(Trigger.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowType(Property.ofValue("GreetingWorkflow"))
             .taskQueue(Property.ofValue(TASK_QUEUE))
@@ -79,9 +82,9 @@ class TriggerWorkflowTest {
         // Use a long-running workflow so it's still RUNNING when we try to start the second.
         var sharedId = "dup-" + UUID.randomUUID();
 
-        var task = TriggerWorkflow.builder()
+        var task = Trigger.builder()
             .id("trigger-dup-" + UUID.randomUUID())
-            .type(TriggerWorkflow.class.getName())
+            .type(Trigger.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowType(Property.ofValue("LongRunningWorkflow"))
             .taskQueue(Property.ofValue(TASK_QUEUE))
@@ -90,9 +93,9 @@ class TriggerWorkflowTest {
 
         task.run(runContextFactory.of());
 
-        var task2 = TriggerWorkflow.builder()
+        var task2 = Trigger.builder()
             .id("trigger-dup2-" + UUID.randomUUID())
-            .type(TriggerWorkflow.class.getName())
+            .type(Trigger.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowType(Property.ofValue("LongRunningWorkflow"))
             .taskQueue(Property.ofValue(TASK_QUEUE))

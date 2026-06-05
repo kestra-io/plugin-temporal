@@ -1,4 +1,6 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.AbstractTemporalTask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
@@ -48,14 +50,14 @@ import java.util.Set;
 
                 tasks:
                   - id: trigger
-                    type: io.kestra.plugin.temporal.TriggerWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Trigger
                     endpoint: "localhost:7233"
                     workflowType: "OrderWorkflow"
                     taskQueue: "order-queue"
                     workflowId: "order-{{ execution.id }}"
 
                   - id: wait
-                    type: io.kestra.plugin.temporal.WaitForWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Wait
                     endpoint: "localhost:7233"
                     workflowId: "{{ outputs.trigger.workflowId }}"
                     runId: "{{ outputs.trigger.runId }}"
@@ -65,7 +67,7 @@ import java.util.Set;
         )
     }
 )
-public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTask<WaitForWorkflow.Output> {
+public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Output> {
 
     private static final Set<WorkflowExecutionStatus> TERMINAL_STATUSES = Set.of(
         WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_COMPLETED,

@@ -1,4 +1,6 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.AbstractTemporalTask;
 
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
@@ -39,7 +41,7 @@ import java.util.Optional;
 
                 tasks:
                   - id: signal
-                    type: io.kestra.plugin.temporal.SignalWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Signal
                     endpoint: "localhost:7233"
                     workflowId: "order-{{ inputs.orderId }}"
                     signalName: "approve"
@@ -49,7 +51,7 @@ import java.util.Optional;
         )
     }
 )
-public class SignalWorkflow extends AbstractTemporalTask implements RunnableTask<VoidOutput> {
+public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOutput> {
 
     @Schema(
         title = "Workflow ID.",

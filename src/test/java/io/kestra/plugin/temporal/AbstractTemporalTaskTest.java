@@ -1,6 +1,7 @@
 package io.kestra.plugin.temporal;
 
 import io.kestra.core.junit.annotations.KestraTest;
+import io.kestra.plugin.temporal.workflow.Trigger;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContextFactory;
 import jakarta.inject.Inject;
@@ -24,10 +25,10 @@ class AbstractTemporalTaskTest {
 
     @Test
     void apiKeyAndMtls_mutuallyExclusive_throwsIllegalArgument() {
-        // TriggerWorkflow is used here as a concrete subclass for testing the abstract base.
-        var task = TriggerWorkflow.builder()
+        // Trigger is used here as a concrete subclass for testing the abstract base.
+        var task = Trigger.builder()
             .id("auth-conflict-" + UUID.randomUUID())
-            .type(TriggerWorkflow.class.getName())
+            .type(Trigger.class.getName())
             .endpoint(Property.ofValue("localhost:7233"))
             .namespace(Property.ofValue("default"))
             .apiKey(Property.ofValue("some-key"))
@@ -43,9 +44,9 @@ class AbstractTemporalTaskTest {
 
     @Test
     void clientCertWithoutClientKey_throwsIllegalArgument() {
-        var task = TriggerWorkflow.builder()
+        var task = Trigger.builder()
             .id("mtls-incomplete-" + UUID.randomUUID())
-            .type(TriggerWorkflow.class.getName())
+            .type(Trigger.class.getName())
             .endpoint(Property.ofValue("localhost:7233"))
             .clientCert(Property.ofValue("-----BEGIN CERTIFICATE-----"))
             .workflowType(Property.ofValue("TestWorkflow"))

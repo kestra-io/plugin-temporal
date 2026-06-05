@@ -1,4 +1,6 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.AbstractTemporalTask;
 
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
@@ -41,7 +43,7 @@ import java.util.UUID;
 
                 tasks:
                   - id: start
-                    type: io.kestra.plugin.temporal.TriggerWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Trigger
                     endpoint: "localhost:7233"
                     namespace: "default"
                     workflowType: "OrderWorkflow"
@@ -61,7 +63,7 @@ import java.util.UUID;
 
                 tasks:
                   - id: start
-                    type: io.kestra.plugin.temporal.TriggerWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Trigger
                     endpoint: "myns.tmprl.cloud:7233"
                     namespace: "myns.accountId"
                     apiKey: "{{ secret('TEMPORAL_API_KEY') }}"
@@ -71,7 +73,7 @@ import java.util.UUID;
         )
     }
 )
-public class TriggerWorkflow extends AbstractTemporalTask implements RunnableTask<TriggerWorkflow.Output> {
+public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigger.Output> {
 
     @Schema(
         title = "Registered workflow type name.",

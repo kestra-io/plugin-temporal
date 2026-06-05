@@ -1,4 +1,7 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.TemporalTestServer;
+import io.kestra.plugin.temporal.TestWorkflows;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
@@ -13,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Integration tests for ScheduleWorkflow.
+ * Integration tests for Schedule.
  *
  * Temporal's in-process TestWorkflowEnvironment does not support the Schedules
  * API (requires a real Temporal server with the scheduler service). These tests
@@ -26,7 +29,7 @@ import static org.hamcrest.Matchers.*;
  */
 @KestraTest
 @EnabledIfSystemProperty(named = "temporal.integration.enabled", matches = "true")
-class ScheduleWorkflowTest {
+class ScheduleTest {
 
     private static final String SERVER = System.getProperty("temporal.server", "localhost:7233");
 
@@ -37,9 +40,9 @@ class ScheduleWorkflowTest {
     void createSchedule_happyPath() throws Exception {
         var scheduleId = "test-schedule-" + UUID.randomUUID();
 
-        var task = ScheduleWorkflow.builder()
+        var task = Schedule.builder()
             .id("schedule-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue(SERVER))
             .scheduleId(Property.ofValue(scheduleId))
             .cron(Property.ofValue("0 9 * * *"))
@@ -56,9 +59,9 @@ class ScheduleWorkflowTest {
     void duplicateSchedule_withoutOverwrite_throws() throws Exception {
         var scheduleId = "dup-schedule-" + UUID.randomUUID();
 
-        var task = ScheduleWorkflow.builder()
+        var task = Schedule.builder()
             .id("schedule-first-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue(SERVER))
             .scheduleId(Property.ofValue(scheduleId))
             .cron(Property.ofValue("0 9 * * *"))
@@ -68,9 +71,9 @@ class ScheduleWorkflowTest {
 
         task.run(runContextFactory.of());
 
-        var task2 = ScheduleWorkflow.builder()
+        var task2 = Schedule.builder()
             .id("schedule-second-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue(SERVER))
             .scheduleId(Property.ofValue(scheduleId))
             .cron(Property.ofValue("0 10 * * *"))
@@ -90,9 +93,9 @@ class ScheduleWorkflowTest {
     void duplicateSchedule_withOverwrite_updatesSchedule() throws Exception {
         var scheduleId = "overwrite-schedule-" + UUID.randomUUID();
 
-        var task = ScheduleWorkflow.builder()
+        var task = Schedule.builder()
             .id("schedule-create-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue(SERVER))
             .scheduleId(Property.ofValue(scheduleId))
             .cron(Property.ofValue("0 9 * * *"))
@@ -102,9 +105,9 @@ class ScheduleWorkflowTest {
 
         task.run(runContextFactory.of());
 
-        var task2 = ScheduleWorkflow.builder()
+        var task2 = Schedule.builder()
             .id("schedule-update-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue(SERVER))
             .scheduleId(Property.ofValue(scheduleId))
             .cron(Property.ofValue("0 10 * * *"))
@@ -120,9 +123,9 @@ class ScheduleWorkflowTest {
 
     @Test
     void missingCronAndInterval_throwsIllegalArgument() {
-        var task = ScheduleWorkflow.builder()
+        var task = Schedule.builder()
             .id("schedule-bad-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue(SERVER))
             .scheduleId(Property.ofValue("bad-" + UUID.randomUUID()))
             .workflowType(Property.ofValue("TestWorkflow"))

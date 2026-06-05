@@ -1,4 +1,6 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.AbstractTemporalTask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
@@ -40,7 +42,7 @@ import java.util.Optional;
 
                 tasks:
                   - id: query
-                    type: io.kestra.plugin.temporal.QueryWorkflow
+                    type: io.kestra.plugin.temporal.workflow.Query
                     endpoint: "localhost:7233"
                     workflowId: "order-{{ inputs.orderId }}"
                     queryType: "getStatus"
@@ -48,7 +50,7 @@ import java.util.Optional;
         )
     }
 )
-public class QueryWorkflow extends AbstractTemporalTask implements RunnableTask<QueryWorkflow.Output> {
+public class Query extends AbstractTemporalTask implements RunnableTask<Query.Output> {
 
     @Schema(
         title = "Workflow ID.",

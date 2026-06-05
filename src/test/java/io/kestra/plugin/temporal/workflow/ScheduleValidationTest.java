@@ -1,4 +1,7 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.TemporalTestServer;
+import io.kestra.plugin.temporal.TestWorkflows;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
@@ -13,20 +16,20 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Input-validation tests for ScheduleWorkflow that run without a real Temporal server.
+ * Input-validation tests for Schedule that run without a real Temporal server.
  * They fail before making any network call, so no server setup is needed.
  */
 @KestraTest
-class ScheduleWorkflowValidationTest {
+class ScheduleValidationTest {
 
     @Inject
     RunContextFactory runContextFactory;
 
     @Test
     void missingCronAndInterval_throwsIllegalArgument() {
-        var task = ScheduleWorkflow.builder()
+        var task = Schedule.builder()
             .id("sched-val-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue("localhost:7233"))
             .scheduleId(Property.ofValue("bad-" + UUID.randomUUID()))
             .workflowType(Property.ofValue("TestWorkflow"))
@@ -38,9 +41,9 @@ class ScheduleWorkflowValidationTest {
 
     @Test
     void bothCronAndInterval_throwsIllegalArgument() {
-        var task = ScheduleWorkflow.builder()
+        var task = Schedule.builder()
             .id("sched-val2-" + UUID.randomUUID())
-            .type(ScheduleWorkflow.class.getName())
+            .type(Schedule.class.getName())
             .endpoint(Property.ofValue("localhost:7233"))
             .scheduleId(Property.ofValue("both-" + UUID.randomUUID()))
             .cron(Property.ofValue("0 9 * * *"))

@@ -1,4 +1,7 @@
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
+
+import io.kestra.plugin.temporal.TemporalTestServer;
+import io.kestra.plugin.temporal.TestWorkflows;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
@@ -15,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @KestraTest
-class WaitForWorkflowTest {
+class WaitTest {
 
     private static final String TASK_QUEUE = "test-wait-" + UUID.randomUUID();
 
@@ -55,9 +58,9 @@ class WaitForWorkflowTest {
         var result = stub.greet("Kestra");
         assertThat(result, notNullValue());
 
-        var task = WaitForWorkflow.builder()
+        var task = Wait.builder()
             .id("wait-" + UUID.randomUUID())
-            .type(WaitForWorkflow.class.getName())
+            .type(Wait.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue(workflowId))
             .pollInterval(Property.ofValue(Duration.ofMillis(200)))
@@ -83,9 +86,9 @@ class WaitForWorkflowTest {
         );
         stub.run();
 
-        var task = WaitForWorkflow.builder()
+        var task = Wait.builder()
             .id("wait-noret-" + UUID.randomUUID())
-            .type(WaitForWorkflow.class.getName())
+            .type(Wait.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue(workflowId))
             .pollInterval(Property.ofValue(Duration.ofMillis(200)))
@@ -100,9 +103,9 @@ class WaitForWorkflowTest {
 
     @Test
     void nonExistentWorkflow_throws() {
-        var task = WaitForWorkflow.builder()
+        var task = Wait.builder()
             .id("wait-missing-" + UUID.randomUUID())
-            .type(WaitForWorkflow.class.getName())
+            .type(Wait.class.getName())
             .endpoint(Property.ofValue(temporalServer.getTarget()))
             .workflowId(Property.ofValue("no-such-workflow-" + UUID.randomUUID()))
             .pollInterval(Property.ofValue(Duration.ofMillis(100)))
