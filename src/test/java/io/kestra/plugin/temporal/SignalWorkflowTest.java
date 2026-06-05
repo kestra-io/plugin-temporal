@@ -54,10 +54,10 @@ class SignalWorkflowTest {
         var task = SignalWorkflow.builder()
             .id("signal-" + UUID.randomUUID())
             .type(SignalWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of(workflowId))
-            .signalName(Property.of("unlock"))
-            .args(Property.of(List.of("\"approved\"")))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue(workflowId))
+            .signalName(Property.ofValue("unlock"))
+            .args(Property.ofValue(List.of("\"approved\"")))
             .build();
 
         // Should not throw.
@@ -69,9 +69,9 @@ class SignalWorkflowTest {
         var task = SignalWorkflow.builder()
             .id("signal-missing-" + UUID.randomUUID())
             .type(SignalWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of("non-existent-" + UUID.randomUUID()))
-            .signalName(Property.of("unlock"))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue("non-existent-" + UUID.randomUUID()))
+            .signalName(Property.ofValue("unlock"))
             .build();
 
         var ex = Assertions.assertThrows(IllegalStateException.class, () -> task.run(runContextFactory.of()));

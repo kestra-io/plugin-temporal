@@ -43,10 +43,10 @@ class TriggerWorkflowTest {
         var task = TriggerWorkflow.builder()
             .id("trigger-" + UUID.randomUUID())
             .type(TriggerWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowType(Property.of("GreetingWorkflow"))
-            .taskQueue(Property.of(TASK_QUEUE))
-            .input(Property.of(List.of("\"World\"")))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowType(Property.ofValue("GreetingWorkflow"))
+            .taskQueue(Property.ofValue(TASK_QUEUE))
+            .input(Property.ofValue(List.of("\"World\"")))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -61,11 +61,11 @@ class TriggerWorkflowTest {
         var task = TriggerWorkflow.builder()
             .id("trigger-custom-" + UUID.randomUUID())
             .type(TriggerWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowType(Property.of("GreetingWorkflow"))
-            .taskQueue(Property.of(TASK_QUEUE))
-            .workflowId(Property.of(customId))
-            .input(Property.of(List.of("\"Kestra\"")))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowType(Property.ofValue("GreetingWorkflow"))
+            .taskQueue(Property.ofValue(TASK_QUEUE))
+            .workflowId(Property.ofValue(customId))
+            .input(Property.ofValue(List.of("\"Kestra\"")))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -82,10 +82,10 @@ class TriggerWorkflowTest {
         var task = TriggerWorkflow.builder()
             .id("trigger-dup-" + UUID.randomUUID())
             .type(TriggerWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowType(Property.of("LongRunningWorkflow"))
-            .taskQueue(Property.of(TASK_QUEUE))
-            .workflowId(Property.of(sharedId))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowType(Property.ofValue("LongRunningWorkflow"))
+            .taskQueue(Property.ofValue(TASK_QUEUE))
+            .workflowId(Property.ofValue(sharedId))
             .build();
 
         task.run(runContextFactory.of());
@@ -93,10 +93,10 @@ class TriggerWorkflowTest {
         var task2 = TriggerWorkflow.builder()
             .id("trigger-dup2-" + UUID.randomUUID())
             .type(TriggerWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowType(Property.of("LongRunningWorkflow"))
-            .taskQueue(Property.of(TASK_QUEUE))
-            .workflowId(Property.of(sharedId))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowType(Property.ofValue("LongRunningWorkflow"))
+            .taskQueue(Property.ofValue(TASK_QUEUE))
+            .workflowId(Property.ofValue(sharedId))
             .build();
 
         var ex = Assertions.assertThrows(IllegalStateException.class, () -> task2.run(runContextFactory.of()));

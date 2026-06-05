@@ -28,13 +28,13 @@ class AbstractTemporalTaskTest {
         var task = TriggerWorkflow.builder()
             .id("auth-conflict-" + UUID.randomUUID())
             .type(TriggerWorkflow.class.getName())
-            .endpoint(Property.of("localhost:7233"))
-            .namespace(Property.of("default"))
-            .apiKey(Property.of("some-key"))
-            .clientCert(Property.of("-----BEGIN CERTIFICATE-----"))
-            .clientKey(Property.of("-----BEGIN PRIVATE KEY-----"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("test-queue"))
+            .endpoint(Property.ofValue("localhost:7233"))
+            .namespace(Property.ofValue("default"))
+            .apiKey(Property.ofValue("some-key"))
+            .clientCert(Property.ofValue("-----BEGIN CERTIFICATE-----"))
+            .clientKey(Property.ofValue("-----BEGIN PRIVATE KEY-----"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("test-queue"))
             .build();
 
         var ex = assertThrows(IllegalArgumentException.class, () -> task.run(runContextFactory.of()));
@@ -46,10 +46,10 @@ class AbstractTemporalTaskTest {
         var task = TriggerWorkflow.builder()
             .id("mtls-incomplete-" + UUID.randomUUID())
             .type(TriggerWorkflow.class.getName())
-            .endpoint(Property.of("localhost:7233"))
-            .clientCert(Property.of("-----BEGIN CERTIFICATE-----"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("test-queue"))
+            .endpoint(Property.ofValue("localhost:7233"))
+            .clientCert(Property.ofValue("-----BEGIN CERTIFICATE-----"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("test-queue"))
             .build();
 
         var ex = assertThrows(IllegalArgumentException.class, () -> task.run(runContextFactory.of()));

@@ -116,7 +116,7 @@ public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTas
     )
     @PluginProperty(group = "reliability")
     @Builder.Default
-    private Property<Boolean> failOnNonCompleted = Property.of(true);
+    private Property<Boolean> failOnNonCompleted = Property.ofValue(true);
 
     @Override
     public Output run(RunContext runContext) throws Exception {

@@ -40,11 +40,11 @@ class ScheduleWorkflowTest {
         var task = ScheduleWorkflow.builder()
             .id("schedule-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of(SERVER))
-            .scheduleId(Property.of(scheduleId))
-            .cron(Property.of("0 9 * * *"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("integration-queue"))
+            .endpoint(Property.ofValue(SERVER))
+            .scheduleId(Property.ofValue(scheduleId))
+            .cron(Property.ofValue("0 9 * * *"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("integration-queue"))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -59,11 +59,11 @@ class ScheduleWorkflowTest {
         var task = ScheduleWorkflow.builder()
             .id("schedule-first-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of(SERVER))
-            .scheduleId(Property.of(scheduleId))
-            .cron(Property.of("0 9 * * *"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("integration-queue"))
+            .endpoint(Property.ofValue(SERVER))
+            .scheduleId(Property.ofValue(scheduleId))
+            .cron(Property.ofValue("0 9 * * *"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("integration-queue"))
             .build();
 
         task.run(runContextFactory.of());
@@ -71,12 +71,12 @@ class ScheduleWorkflowTest {
         var task2 = ScheduleWorkflow.builder()
             .id("schedule-second-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of(SERVER))
-            .scheduleId(Property.of(scheduleId))
-            .cron(Property.of("0 10 * * *"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("integration-queue"))
-            .overwrite(Property.of(false))
+            .endpoint(Property.ofValue(SERVER))
+            .scheduleId(Property.ofValue(scheduleId))
+            .cron(Property.ofValue("0 10 * * *"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("integration-queue"))
+            .overwrite(Property.ofValue(false))
             .build();
 
         var ex = org.junit.jupiter.api.Assertions.assertThrows(
@@ -93,11 +93,11 @@ class ScheduleWorkflowTest {
         var task = ScheduleWorkflow.builder()
             .id("schedule-create-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of(SERVER))
-            .scheduleId(Property.of(scheduleId))
-            .cron(Property.of("0 9 * * *"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("integration-queue"))
+            .endpoint(Property.ofValue(SERVER))
+            .scheduleId(Property.ofValue(scheduleId))
+            .cron(Property.ofValue("0 9 * * *"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("integration-queue"))
             .build();
 
         task.run(runContextFactory.of());
@@ -105,12 +105,12 @@ class ScheduleWorkflowTest {
         var task2 = ScheduleWorkflow.builder()
             .id("schedule-update-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of(SERVER))
-            .scheduleId(Property.of(scheduleId))
-            .cron(Property.of("0 10 * * *"))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("integration-queue"))
-            .overwrite(Property.of(true))
+            .endpoint(Property.ofValue(SERVER))
+            .scheduleId(Property.ofValue(scheduleId))
+            .cron(Property.ofValue("0 10 * * *"))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("integration-queue"))
+            .overwrite(Property.ofValue(true))
             .build();
 
         var output = task2.run(runContextFactory.of());
@@ -123,10 +123,10 @@ class ScheduleWorkflowTest {
         var task = ScheduleWorkflow.builder()
             .id("schedule-bad-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of(SERVER))
-            .scheduleId(Property.of("bad-" + UUID.randomUUID()))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("integration-queue"))
+            .endpoint(Property.ofValue(SERVER))
+            .scheduleId(Property.ofValue("bad-" + UUID.randomUUID()))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("integration-queue"))
             .build();
 
         org.junit.jupiter.api.Assertions.assertThrows(

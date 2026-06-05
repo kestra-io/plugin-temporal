@@ -58,10 +58,10 @@ class WaitForWorkflowTest {
         var task = WaitForWorkflow.builder()
             .id("wait-" + UUID.randomUUID())
             .type(WaitForWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of(workflowId))
-            .pollInterval(Property.of(Duration.ofMillis(200)))
-            .timeout(Property.of(Duration.ofSeconds(30)))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue(workflowId))
+            .pollInterval(Property.ofValue(Duration.ofMillis(200)))
+            .timeout(Property.ofValue(Duration.ofSeconds(30)))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -86,11 +86,11 @@ class WaitForWorkflowTest {
         var task = WaitForWorkflow.builder()
             .id("wait-noret-" + UUID.randomUUID())
             .type(WaitForWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of(workflowId))
-            .pollInterval(Property.of(Duration.ofMillis(200)))
-            .timeout(Property.of(Duration.ofSeconds(30)))
-            .failOnNonCompleted(Property.of(false))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue(workflowId))
+            .pollInterval(Property.ofValue(Duration.ofMillis(200)))
+            .timeout(Property.ofValue(Duration.ofSeconds(30)))
+            .failOnNonCompleted(Property.ofValue(false))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -103,11 +103,11 @@ class WaitForWorkflowTest {
         var task = WaitForWorkflow.builder()
             .id("wait-missing-" + UUID.randomUUID())
             .type(WaitForWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of("no-such-workflow-" + UUID.randomUUID()))
-            .pollInterval(Property.of(Duration.ofMillis(100)))
-            .timeout(Property.of(Duration.ofMillis(300)))
-            .failOnNonCompleted(Property.of(true))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue("no-such-workflow-" + UUID.randomUUID()))
+            .pollInterval(Property.ofValue(Duration.ofMillis(100)))
+            .timeout(Property.ofValue(Duration.ofMillis(300)))
+            .failOnNonCompleted(Property.ofValue(true))
             .build();
 
         // gRPC NOT_FOUND or timeout exceeded.

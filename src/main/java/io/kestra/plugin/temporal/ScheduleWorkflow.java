@@ -123,7 +123,7 @@ public class ScheduleWorkflow extends AbstractTemporalTask implements RunnableTa
     )
     @PluginProperty(group = "reliability")
     @Builder.Default
-    private Property<Boolean> overwrite = Property.of(false);
+    private Property<Boolean> overwrite = Property.ofValue(false);
 
     @Override
     public Output run(RunContext runContext) throws Exception {

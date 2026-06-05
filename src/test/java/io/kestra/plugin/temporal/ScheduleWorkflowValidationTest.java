@@ -27,10 +27,10 @@ class ScheduleWorkflowValidationTest {
         var task = ScheduleWorkflow.builder()
             .id("sched-val-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of("localhost:7233"))
-            .scheduleId(Property.of("bad-" + UUID.randomUUID()))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("test-queue"))
+            .endpoint(Property.ofValue("localhost:7233"))
+            .scheduleId(Property.ofValue("bad-" + UUID.randomUUID()))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("test-queue"))
             .build();
 
         assertThrows(IllegalArgumentException.class, () -> task.run(runContextFactory.of()));
@@ -41,12 +41,12 @@ class ScheduleWorkflowValidationTest {
         var task = ScheduleWorkflow.builder()
             .id("sched-val2-" + UUID.randomUUID())
             .type(ScheduleWorkflow.class.getName())
-            .endpoint(Property.of("localhost:7233"))
-            .scheduleId(Property.of("both-" + UUID.randomUUID()))
-            .cron(Property.of("0 9 * * *"))
-            .intervalSeconds(Property.of(300L))
-            .workflowType(Property.of("TestWorkflow"))
-            .taskQueue(Property.of("test-queue"))
+            .endpoint(Property.ofValue("localhost:7233"))
+            .scheduleId(Property.ofValue("both-" + UUID.randomUUID()))
+            .cron(Property.ofValue("0 9 * * *"))
+            .intervalSeconds(Property.ofValue(300L))
+            .workflowType(Property.ofValue("TestWorkflow"))
+            .taskQueue(Property.ofValue("test-queue"))
             .build();
 
         assertThrows(IllegalArgumentException.class, () -> task.run(runContextFactory.of()));

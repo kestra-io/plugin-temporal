@@ -52,9 +52,9 @@ class QueryWorkflowTest {
         var task = QueryWorkflow.builder()
             .id("query-" + UUID.randomUUID())
             .type(QueryWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of(workflowId))
-            .queryType(Property.of("getStatus"))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue(workflowId))
+            .queryType(Property.ofValue("getStatus"))
             .build();
 
         var output = task.run(runContextFactory.of());
@@ -68,9 +68,9 @@ class QueryWorkflowTest {
         var task = QueryWorkflow.builder()
             .id("query-missing-" + UUID.randomUUID())
             .type(QueryWorkflow.class.getName())
-            .endpoint(Property.of(temporalServer.getTarget()))
-            .workflowId(Property.of("non-existent-" + UUID.randomUUID()))
-            .queryType(Property.of("getStatus"))
+            .endpoint(Property.ofValue(temporalServer.getTarget()))
+            .workflowId(Property.ofValue("non-existent-" + UUID.randomUUID()))
+            .queryType(Property.ofValue("getStatus"))
             .build();
 
         var ex = Assertions.assertThrows(IllegalStateException.class, () -> task.run(runContextFactory.of()));
