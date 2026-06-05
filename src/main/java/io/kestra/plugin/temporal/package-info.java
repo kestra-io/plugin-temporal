@@ -1,7 +1,7 @@
 @PluginSubGroup(
     title = "Temporal",
-    description = "Temporal plugin for Kestra",
-    categories = PluginSubGroup.PluginCategory.DATA
+    description = "Interact with Temporal workflow orchestration from Kestra tasks.",
+    categories = PluginSubGroup.PluginCategory.INFRASTRUCTURE
 )
 package io.kestra.plugin.temporal;
 

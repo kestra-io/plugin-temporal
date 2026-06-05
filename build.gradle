@@ -49,12 +49,25 @@ dependencies {
     annotationProcessor group: "io.kestra", name: "processor", version: kestraVersion
     compileOnly group: "io.kestra", name: "core", version: kestraVersion
     compileOnly group: "io.kestra", name: "script", version: kestraVersion
+
+    // Temporal Java SDK (1.28.4 is the latest version compatible with protobuf 3.25.x)
+    implementation "io.temporal:temporal-sdk:1.28.4"
 }
 
 
 /**********************************************************************************************************************\
  * Test
  **********************************************************************************************************************/
+
+// grpc-protobuf 1.76.x (enforced by Kestra platform) is compiled against protobuf 4.x APIs.
+// Temporal's TestWorkflowEnvironment triggers the StatusProto initializer which requires
+// RuntimeVersion$RuntimeDomain from protobuf 4.x. Forcing protobuf-java to 4.33.2 in the
+// test classpath resolves the NoClassDefFoundError without affecting the production jar.
+configurations.testRuntimeClasspath {
+    resolutionStrategy.force "com.google.protobuf:protobuf-java:4.33.2"
+    resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.33.2"
+}
+
 test {
     useJUnitPlatform()
 }
@@ -96,6 +109,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
     testImplementation "org.hamcrest:hamcrest"
     testImplementation "org.hamcrest:hamcrest-library"
+
+    // Temporal test server (in-process, time-skipping)
+    testImplementation "io.temporal:temporal-testing:1.28.4"
 }
 
 /**********************************************************************************************************************\

@@ -1,0 +1,18 @@
+version: "3.8"
+
+# Temporal server for integration tests (ScheduleWorkflow).
+# Run: docker compose -f docker-compose-ci.yml up -d
+# Then: ./gradlew test -Dtemporal.integration.enabled=true
+
+services:
+  temporal:
+    image: temporalio/auto-setup:1.25.0
+    ports:
+      - "7233:7233"
+    environment:
+      - DB=memory
+    healthcheck:
+      test: ["CMD", "tctl", "cluster", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
