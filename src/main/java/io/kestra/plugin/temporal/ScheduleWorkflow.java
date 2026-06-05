@@ -162,6 +162,8 @@ public class ScheduleWorkflow extends AbstractTemporalTask implements RunnableTa
                 .setWorkflowType(rWorkflowType)
                 .setOptions(
                     WorkflowOptions.newBuilder()
+                        // base ID for scheduled runs, Temporal appends the fire timestamp per execution
+                        .setWorkflowId(rScheduleId + "-workflow")
                         .setTaskQueue(rTaskQueue)
                         .build()
                 )

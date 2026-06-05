@@ -70,6 +70,9 @@ configurations.testRuntimeClasspath {
 
 test {
     useJUnitPlatform()
+
+    // forward the integration-test toggle to the test JVM
+    systemProperty "temporal.integration.enabled", System.getProperty("temporal.integration.enabled", "false")
 }
 
 testlogger {
