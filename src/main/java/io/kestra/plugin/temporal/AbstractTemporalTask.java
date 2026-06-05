@@ -1,5 +1,6 @@
 package io.kestra.plugin.temporal;
 
+import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.Task;
 import io.kestra.core.runners.RunContext;
@@ -16,6 +17,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayInputStream;
@@ -48,12 +50,15 @@ public abstract class AbstractTemporalTask extends Task {
             e.g. `<namespace>.tmprl.cloud:7233`.
             """
     )
+    @NotNull
+    @PluginProperty(group = "connection")
     private Property<String> endpoint;
 
     @Schema(
         title = "Temporal namespace.",
         description = "Defaults to `default`. For Temporal Cloud, typically `<namespace>.<accountId>`."
     )
+    @PluginProperty(group = "connection")
     private Property<String> namespace;
 
     @Schema(
@@ -64,24 +69,31 @@ public abstract class AbstractTemporalTask extends Task {
             Mutually exclusive with mTLS properties.
             """
     )
+    @PluginProperty(group = "connection", secret = true)
     private Property<String> apiKey;
 
     @Schema(
         title = "PEM-encoded CA certificate.",
-        description = "Used in mTLS mode to verify the server certificate."
+        description = """
+            Verifies the server certificate. Can be used alone for one-way TLS
+            with a custom CA, or together with `clientCert`/`clientKey` for mTLS.
+            """
     )
+    @PluginProperty(group = "connection")
     private Property<String> caCert;
 
     @Schema(
         title = "PEM-encoded client certificate.",
         description = "Used in mTLS mode. Must be provided together with `clientKey`."
     )
+    @PluginProperty(group = "connection", secret = true)
     private Property<String> clientCert;
 
     @Schema(
         title = "PEM-encoded client private key.",
         description = "Used in mTLS mode. Must be provided together with `clientCert`."
     )
+    @PluginProperty(group = "connection", secret = true)
     private Property<String> clientKey;
 
     /**
@@ -137,8 +149,7 @@ public abstract class AbstractTemporalTask extends Task {
             .setTarget(rEndpoint);
 
         if (rApiKey != null) {
-            var key = rApiKey;
-            builder.addApiKey(() -> key);
+            builder.addApiKey(() -> rApiKey);
             // Temporal Cloud requires TLS with API keys.
             builder.setEnableHttps(true);
         } else if (rClientCert != null) {
@@ -150,6 +161,13 @@ public abstract class AbstractTemporalTask extends Task {
                 sslBuilder.setTrustManager(buildTrustManager(rCaCert));
             }
             builder.setSslContext(sslBuilder.build());
+        } else if (rCaCert != null) {
+            // one-way TLS: verify the server against a custom CA, no client certificate
+            builder.setSslContext(
+                SimpleSslContextBuilder.noKeyOrCertChain()
+                    .setTrustManager(buildTrustManager(rCaCert))
+                    .build()
+            );
         }
 
         return builder.build();
@@ -181,8 +199,14 @@ public abstract class AbstractTemporalTask extends Task {
      * Must be called in a finally block after each task run.
      */
     protected void closeClient(WorkflowClient client) {
+        var stubs = client.getWorkflowServiceStubs();
         try {
-            client.getWorkflowServiceStubs().shutdown();
+            stubs.shutdown();
+            // force-close the gRPC channel if it does not drain quickly,
+            // otherwise channel threads accumulate on busy workers
+            if (!stubs.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                stubs.shutdownNow();
+            }
         } catch (Exception ignored) {
             // best-effort shutdown
         }

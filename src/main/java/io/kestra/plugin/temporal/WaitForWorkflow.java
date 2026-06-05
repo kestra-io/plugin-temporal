@@ -72,7 +72,8 @@ public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTas
         WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_FAILED,
         WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_CANCELED,
         WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_TERMINATED,
-        WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_TIMED_OUT
+        WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_TIMED_OUT,
+        WorkflowExecutionStatus.WORKFLOW_EXECUTION_STATUS_CONTINUED_AS_NEW
     );
 
     private static final ObjectMapper MAPPER = JacksonMapper.ofJson();
@@ -171,7 +172,13 @@ public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTas
                     return Output.builder().status("TIMED_OUT").result(null).build();
                 }
 
-                Thread.sleep(rPollInterval.toMillis());
+                try {
+                    Thread.sleep(rPollInterval.toMillis());
+                } catch (InterruptedException e) {
+                    // restore the interrupt flag for the worker before propagating
+                    Thread.currentThread().interrupt();
+                    throw e;
+                }
             }
 
             var statusName = terminalStatusName(finalStatus);
@@ -216,6 +223,7 @@ public class WaitForWorkflow extends AbstractTemporalTask implements RunnableTas
             case WORKFLOW_EXECUTION_STATUS_CANCELED    -> "CANCELED";
             case WORKFLOW_EXECUTION_STATUS_TERMINATED  -> "TERMINATED";
             case WORKFLOW_EXECUTION_STATUS_TIMED_OUT   -> "TIMED_OUT";
+            case WORKFLOW_EXECUTION_STATUS_CONTINUED_AS_NEW -> "CONTINUED_AS_NEW";
             default -> status.name();
         };
     }
