@@ -1,8 +1,5 @@
 package io.kestra.plugin.temporal.workflow;
 
-import io.kestra.plugin.temporal.TemporalTestServer;
-import io.kestra.plugin.temporal.TestWorkflows;
-
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContextFactory;

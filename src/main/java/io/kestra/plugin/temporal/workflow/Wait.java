@@ -22,6 +22,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @SuperBuilder
 @ToString
@@ -194,15 +196,18 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
                 return Output.builder().status(statusName).result(null).build();
             }
 
-            // Workflow completed: fetch the result via a non-blocking getResult with a short timeout.
+            // Workflow completed: fetch the result. It is already done, so give getResult
+            // the remaining wait budget rather than a fixed short timeout.
             var stub = client.newUntypedWorkflowStub(rWorkflowId, Optional.ofNullable(rRunId), Optional.empty());
+            var remaining = Math.max(1, Duration.between(Instant.now(), deadline).getSeconds());
             String resultJson;
             try {
-                var rawResult = stub.getResult(1, java.util.concurrent.TimeUnit.SECONDS, Object.class);
+                var rawResult = stub.getResult(remaining, TimeUnit.SECONDS, Object.class);
                 resultJson = rawResult == null ? "null" : MAPPER.writeValueAsString(rawResult);
-            } catch (java.util.concurrent.TimeoutException e) {
-                // Already confirmed COMPLETED via DescribeWorkflowExecution,
-                // so a short getResult timeout here is unexpected but non-fatal.
+            } catch (TimeoutException e) {
+                // confirmed COMPLETED via DescribeWorkflowExecution but the result did not
+                // arrive in time; report null result rather than failing the task
+                logger.warn("workflowId={} completed but result fetch timed out, returning null result", rWorkflowId);
                 resultJson = "null";
             } catch (Exception e) {
                 throw new IllegalStateException(
@@ -234,7 +239,7 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
 
         @Schema(
             title = "Workflow terminal status.",
-            description = "One of: COMPLETED, FAILED, CANCELED, TERMINATED, TIMED_OUT."
+            description = "One of: COMPLETED, FAILED, CANCELED, TERMINATED, TIMED_OUT, CONTINUED_AS_NEW."
         )
         private final String status;
 

@@ -155,8 +155,16 @@ public abstract class AbstractTemporalTask extends Task {
 
         if (rApiKey != null) {
             builder.addApiKey(() -> rApiKey);
-            // Temporal Cloud requires TLS with API keys.
-            builder.setEnableHttps(true);
+            // API keys require TLS; use a custom CA when given, otherwise the system trust store.
+            if (rCaCert != null) {
+                builder.setSslContext(
+                    SimpleSslContextBuilder.noKeyOrCertChain()
+                        .setTrustManager(buildTrustManager(rCaCert))
+                        .build()
+                );
+            } else {
+                builder.setEnableHttps(true);
+            }
         } else if (rClientCert != null) {
             var sslBuilder = SimpleSslContextBuilder.forPKCS8(
                 new ByteArrayInputStream(rClientCert.getBytes(StandardCharsets.UTF_8)),

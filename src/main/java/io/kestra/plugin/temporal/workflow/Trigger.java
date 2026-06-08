@@ -9,6 +9,7 @@ import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.temporal.api.common.v1.WorkflowExecution;
 import io.temporal.client.WorkflowExecutionAlreadyStarted;
 import io.temporal.client.WorkflowOptions;
 import lombok.*;
@@ -138,7 +139,7 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
 
         try (var conn = connect(runContext)) {
             var stub = conn.client().newUntypedWorkflowStub(rWorkflowType, optionsBuilder.build());
-            io.temporal.api.common.v1.WorkflowExecution execution;
+            WorkflowExecution execution;
             try {
                 execution = stub.start(rInput.toArray());
             } catch (WorkflowExecutionAlreadyStarted e) {
