@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Starts the Temporal dev server required by the ScheduleWorkflow integration tests.
-# Run tests afterwards with: ./gradlew test -Dtemporal.integration.enabled=true
 set -euo pipefail
 
 docker compose -f docker-compose-ci.yml up -d --wait
