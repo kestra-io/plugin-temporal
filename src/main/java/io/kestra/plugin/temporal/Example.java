@@ -43,7 +43,7 @@ public class Example extends Task implements RunnableTask<Example.Output> {
         logger.debug(render);
 
         return Output.builder()
-            .child(new OutputChild(StringUtils.reverse(render)))
+            .child(OutputChild.builder().value(StringUtils.reverse(render)).build())
             .build();
     }
 
