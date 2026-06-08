@@ -138,8 +138,8 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
         logger.info("Waiting for workflowId={} runId={} timeout={}",
             rWorkflowId, rRunId != null ? rRunId : "<latest>", rTimeout);
 
-        var client = buildClient(runContext);
-        try {
+        try (var conn = connect(runContext)) {
+            var client       = conn.client();
             var serviceStubs = client.getWorkflowServiceStubs();
             var namespace    = client.getOptions().getNamespace();
             var deadline     = Instant.now().plus(rTimeout);
@@ -213,8 +213,6 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
 
             logger.info("workflowId={} completed", rWorkflowId);
             return Output.builder().status("COMPLETED").result(resultJson).build();
-        } finally {
-            closeClient(client);
         }
     }
 

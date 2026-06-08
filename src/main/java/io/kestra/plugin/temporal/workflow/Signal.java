@@ -95,9 +95,8 @@ public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOut
         var logger = runContext.logger();
         logger.info("Sending signal={} to workflowId={} runId={}", rSignalName, rWorkflowId, rRunId != null ? rRunId : "<latest>");
 
-        var client = buildClient(runContext);
-        try {
-            var stub = client.newUntypedWorkflowStub(rWorkflowId, Optional.ofNullable(rRunId), Optional.empty());
+        try (var conn = connect(runContext)) {
+            var stub = conn.client().newUntypedWorkflowStub(rWorkflowId, Optional.ofNullable(rRunId), Optional.empty());
             try {
                 stub.signal(rSignalName, rArgs.toArray());
             } catch (WorkflowNotFoundException e) {
@@ -108,8 +107,6 @@ public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOut
                 );
             }
             logger.info("Signal '{}' sent successfully", rSignalName);
-        } finally {
-            closeClient(client);
         }
         return null;
     }

@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Shared connection and auth configuration for all Temporal tasks.
@@ -97,10 +98,14 @@ public abstract class AbstractTemporalTask extends Task {
     private Property<String> clientKey;
 
     /**
-     * Builds a connected WorkflowClient. The caller must call
-     * {@link #closeClient(WorkflowClient)} in a finally block.
+     * Opens a connection to Temporal. Use in a try-with-resources block;
+     * {@link TemporalConnection#close()} shuts down the underlying gRPC channel.
      */
-    protected WorkflowClient buildClient(RunContext runContext) throws Exception {
+    protected TemporalConnection connect(RunContext runContext) throws Exception {
+        return new TemporalConnection(buildClient(runContext));
+    }
+
+    private WorkflowClient buildClient(RunContext runContext) throws Exception {
         var rEndpoint   = runContext.render(endpoint).as(String.class)
             .orElseThrow(() -> new IllegalArgumentException("endpoint is required"));
         var rNamespace  = runContext.render(namespace).as(String.class).orElse("default");
@@ -195,20 +200,22 @@ public abstract class AbstractTemporalTask extends Task {
     }
 
     /**
-     * Shuts down the workflow client and its underlying service stubs.
-     * Must be called in a finally block after each task run.
+     * A WorkflowClient bound to an open gRPC channel. Closing it shuts the channel down.
      */
-    protected void closeClient(WorkflowClient client) {
-        var stubs = client.getWorkflowServiceStubs();
-        try {
-            stubs.shutdown();
-            // force-close the gRPC channel if it does not drain quickly,
-            // otherwise channel threads accumulate on busy workers
-            if (!stubs.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
-                stubs.shutdownNow();
+    protected record TemporalConnection(WorkflowClient client) implements AutoCloseable {
+        @Override
+        public void close() {
+            var stubs = client.getWorkflowServiceStubs();
+            try {
+                stubs.shutdown();
+                // force-close the channel if it does not drain quickly,
+                // otherwise channel threads accumulate on busy workers
+                if (!stubs.awaitTermination(5, TimeUnit.SECONDS)) {
+                    stubs.shutdownNow();
+                }
+            } catch (Exception ignored) {
+                // best-effort shutdown
             }
-        } catch (Exception ignored) {
-            // best-effort shutdown
         }
     }
 }

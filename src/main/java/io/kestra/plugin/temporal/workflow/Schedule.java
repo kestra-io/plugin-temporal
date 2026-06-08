@@ -150,8 +150,8 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
         var logger = runContext.logger();
         logger.info("Configuring schedule scheduleId={} workflowType={}", rScheduleId, rWorkflowType);
 
-        var client = buildClient(runContext);
-        try {
+        try (var conn = connect(runContext)) {
+            var client = conn.client();
             var scheduleClientOptions = ScheduleClientOptions.newBuilder()
                 .setNamespace(client.getOptions().getNamespace())
                 .build();
@@ -172,7 +172,6 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
                 .setArguments(rArgs.toArray())
                 .build();
 
-            // fully qualified: this task class shadows the SDK's Schedule type
             var schedule = io.temporal.client.schedules.Schedule.newBuilder()
                 .setAction(action)
                 .setSpec(spec)
@@ -199,8 +198,6 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
             }
 
             return Output.builder().scheduleId(rScheduleId).build();
-        } finally {
-            closeClient(client);
         }
     }
 

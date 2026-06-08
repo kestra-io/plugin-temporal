@@ -55,17 +55,14 @@ public final class TemporalTestServer implements Closeable {
         return workerFactory.newWorker(taskQueue);
     }
 
-    /** Starts all registered workers. */
     public void startWorkers() {
         workerFactory.start();
     }
 
-    /** Returns a WorkflowClient connected to the test server. */
     public WorkflowClient getClient() {
         return client;
     }
 
-    /** Returns the host:port string for use as a task endpoint. */
     public String getTarget() {
         return "127.0.0.1:" + port;
     }

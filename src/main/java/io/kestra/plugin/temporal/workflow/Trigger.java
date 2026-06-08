@@ -136,9 +136,8 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
             optionsBuilder.setWorkflowExecutionTimeout(rTimeout);
         }
 
-        var client = buildClient(runContext);
-        try {
-            var stub = client.newUntypedWorkflowStub(rWorkflowType, optionsBuilder.build());
+        try (var conn = connect(runContext)) {
+            var stub = conn.client().newUntypedWorkflowStub(rWorkflowType, optionsBuilder.build());
             io.temporal.api.common.v1.WorkflowExecution execution;
             try {
                 execution = stub.start(rInput.toArray());
@@ -154,8 +153,6 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
                 .workflowId(execution.getWorkflowId())
                 .runId(execution.getRunId())
                 .build();
-        } finally {
-            closeClient(client);
         }
     }
 

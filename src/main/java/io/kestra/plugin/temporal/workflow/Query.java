@@ -96,8 +96,8 @@ public class Query extends AbstractTemporalTask implements RunnableTask<Query.Ou
         var logger = runContext.logger();
         logger.info("Querying workflowId={} queryType={}", rWorkflowId, rQueryType);
 
-        var client = buildClient(runContext);
-        try {
+        try (var conn = connect(runContext)) {
+            var client = conn.client();
             var stub = client.newUntypedWorkflowStub(rWorkflowId, Optional.ofNullable(rRunId), Optional.empty());
             // Query returns the result deserialized as Object (Map/List/primitive via Jackson).
             // We re-serialize it to a canonical JSON string so the output is always valid JSON.
@@ -125,8 +125,6 @@ public class Query extends AbstractTemporalTask implements RunnableTask<Query.Ou
             return Output.builder()
                 .result(resultJson)
                 .build();
-        } finally {
-            closeClient(client);
         }
     }
 

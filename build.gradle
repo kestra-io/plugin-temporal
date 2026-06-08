@@ -50,7 +50,6 @@ dependencies {
     compileOnly group: "io.kestra", name: "core", version: kestraVersion
     compileOnly group: "io.kestra", name: "script", version: kestraVersion
 
-    // Temporal Java SDK (1.28.4 is the latest version compatible with protobuf 3.25.x)
     implementation "io.temporal:temporal-sdk:1.28.4"
 }
 
@@ -59,12 +58,8 @@ dependencies {
  * Test
  **********************************************************************************************************************/
 
-// grpc-protobuf 1.76.x and proto-google-common-protos 2.65.x (enforced by Kestra platform)
-// are compiled against protobuf 4.x APIs, while the platform pins protobuf-java to 3.25.x.
-// Mixing them causes a VerifyError (com.google.rpc.Status vs protobuf 3.25 Any) at runtime
-// and a NoClassDefFoundError (RuntimeVersion$RuntimeDomain) in tests. Force protobuf 4.x on
-// both the test classpath and the runtime classpath that feeds the shadow jar. The plugin
-// classloader is child-first, so the bundled protobuf 4.x never leaks into Kestra core.
+// gRPC deps in the BOM are built against protobuf 4.x while the BOM pins protobuf-java 3.25.x;
+// force 4.x in the plugin jar to avoid a runtime VerifyError.
 [configurations.testRuntimeClasspath, configurations.runtimeClasspath].each { cfg ->
     cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java:4.33.2"
     cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.33.2"
