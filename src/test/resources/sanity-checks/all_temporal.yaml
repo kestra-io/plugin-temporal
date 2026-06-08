@@ -1,0 +1,78 @@
+id: all_temporal
+namespace: sanitychecks.plugin-temporal
+
+# End-to-end smoke test of the Temporal tasks against a real dev server started in-flow.
+# Query and Wait-to-COMPLETED are not exercised here: completing a workflow requires a
+# worker running the workflow code, which a Kestra flow cannot host. This flow covers the
+# worker-independent paths: Trigger, Signal, Schedule, and Wait's timeout branch.
+
+tasks:
+  - id: port
+    type: io.kestra.plugin.core.debug.Return
+    format: "{{ randomPort() }}"
+
+  - id: temporal_start
+    type: io.kestra.plugin.docker.Run
+    containerImage: temporalio/temporal:latest
+    portBindings:
+      - "{{ outputs.port.value }}:7233"
+    entryPoint:
+      - temporal
+    commands:
+      - server
+      - start-dev
+      - --ip
+      - 0.0.0.0
+    wait: false
+
+  - id: sleep
+    type: io.kestra.plugin.core.flow.Sleep
+    duration: PT15S
+
+  - id: trigger
+    type: io.kestra.plugin.temporal.workflow.Trigger
+    endpoint: "localhost:{{ outputs.port.value }}"
+    workflowType: "SanityWorkflow"
+    taskQueue: "sanity-queue"
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 15
+
+  - id: signal
+    type: io.kestra.plugin.temporal.workflow.Signal
+    endpoint: "localhost:{{ outputs.port.value }}"
+    workflowId: "{{ outputs.trigger.workflowId }}"
+    signalName: "unlock"
+    args:
+      - '"from-sanity"'
+
+  - id: schedule
+    type: io.kestra.plugin.temporal.workflow.Schedule
+    endpoint: "localhost:{{ outputs.port.value }}"
+    scheduleId: "sanity-schedule"
+    cron: "0 9 * * *"
+    workflowType: "SanityWorkflow"
+    taskQueue: "sanity-queue"
+    overwrite: true
+
+  - id: wait
+    type: io.kestra.plugin.temporal.workflow.Wait
+    endpoint: "localhost:{{ outputs.port.value }}"
+    workflowId: "{{ outputs.trigger.workflowId }}"
+    pollInterval: PT1S
+    waitTimeout: PT5S
+    failOnNonCompleted: false
+
+  - id: assert
+    type: io.kestra.plugin.core.execution.Assert
+    conditions:
+      - "{{ outputs.trigger.workflowId != '' }}"
+      - "{{ outputs.trigger.runId != '' }}"
+      - "{{ outputs.schedule.scheduleId == 'sanity-schedule' }}"
+      - "{{ outputs.wait.status == 'TIMED_OUT' }}"
+
+finally:
+  - id: temporal_stop
+    type: io.kestra.plugin.docker.Stop
+    containerId: "{{ outputs.temporal_start.taskRunner.containerId }}"

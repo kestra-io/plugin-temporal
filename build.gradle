@@ -102,6 +102,11 @@ dependencies {
     testImplementation group: "io.kestra", name: "repository-memory", version: kestraVersion
     testImplementation group: "io.kestra", name: "runner-memory", version: kestraVersion
     testImplementation group: "io.kestra", name: "storage-local", version: kestraVersion
+    // sanity-check flow runs docker.Run; script provides AbstractExecScript, docker-java is the runtime
+    testImplementation group: "io.kestra", name: "script", version: kestraVersion
+    testImplementation "io.kestra.plugin:plugin-docker:1.5.0"
+    testImplementation "com.github.docker-java:docker-java-core:3.7.1"
+    testImplementation "com.github.docker-java:docker-java-transport-zerodep:3.7.1"
 
     // test
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
