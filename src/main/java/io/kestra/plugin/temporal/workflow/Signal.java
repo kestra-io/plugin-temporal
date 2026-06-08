@@ -108,6 +108,6 @@ public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOut
             }
             logger.info("Signal '{}' sent successfully", rSignalName);
         }
-        return new VoidOutput();
+        return null;
     }
 }
