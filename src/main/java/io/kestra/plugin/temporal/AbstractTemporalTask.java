@@ -187,16 +187,22 @@ public abstract class AbstractTemporalTask extends Task {
     }
 
     /**
-     * Parses a PEM-encoded X.509 CA certificate and wraps it in a TrustManager.
+     * Parses a PEM-encoded X.509 CA bundle (one or more certificates) into a TrustManager.
      */
     private static X509TrustManager buildTrustManager(String caCertPem) throws Exception {
         var certFactory = CertificateFactory.getInstance("X.509");
-        var cert = certFactory.generateCertificate(
+        var certs = certFactory.generateCertificates(
             new ByteArrayInputStream(caCertPem.getBytes(StandardCharsets.UTF_8))
         );
+        if (certs.isEmpty()) {
+            throw new IllegalArgumentException("No X.509 certificate found in the provided CA PEM");
+        }
         var keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", cert);
+        var i = 0;
+        for (var cert : certs) {
+            keyStore.setCertificateEntry("ca-" + i++, cert);
+        }
         var tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init(keyStore);
         for (var tm : tmf.getTrustManagers()) {
