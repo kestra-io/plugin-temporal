@@ -1,11 +1,6 @@
 id: all_temporal
 namespace: sanitychecks.plugin-temporal
 
-# End-to-end smoke test of the Temporal tasks against a real dev server started in-flow.
-# Query and Wait-to-COMPLETED are not exercised here: completing a workflow requires a
-# worker running the workflow code, which a Kestra flow cannot host. This flow covers the
-# worker-independent paths: Trigger, Signal, Schedule, and Wait's timeout branch.
-
 tasks:
   - id: port
     type: io.kestra.plugin.core.debug.Return
