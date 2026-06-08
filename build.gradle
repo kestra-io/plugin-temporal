@@ -48,15 +48,27 @@ dependencies {
     // kestra
     annotationProcessor group: "io.kestra", name: "processor", version: kestraVersion
     compileOnly group: "io.kestra", name: "core", version: kestraVersion
-    compileOnly group: "io.kestra", name: "script", version: kestraVersion
+
+    implementation "io.temporal:temporal-sdk:1.28.4"
 }
 
 
 /**********************************************************************************************************************\
  * Test
  **********************************************************************************************************************/
+
+// gRPC deps in the BOM are built against protobuf 4.x while the BOM pins protobuf-java 3.25.x;
+// force 4.x in the plugin jar to avoid a runtime VerifyError.
+[configurations.testRuntimeClasspath, configurations.runtimeClasspath].each { cfg ->
+    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java:4.33.2"
+    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.33.2"
+}
+
 test {
     useJUnitPlatform()
+
+    // forward the integration-test toggle to the test JVM
+    systemProperty "temporal.integration.enabled", System.getProperty("temporal.integration.enabled", "false")
 }
 
 testlogger {
@@ -87,7 +99,6 @@ dependencies {
     testAnnotationProcessor group: "io.kestra", name: "processor", version: kestraVersion
     testImplementation group: "io.kestra", name: "core", version: kestraVersion
     testImplementation group: "io.kestra", name: "tests", version: kestraVersion
-    testImplementation group: "io.kestra", name: "script", version: kestraVersion
     testImplementation group: "io.kestra", name: "repository-memory", version: kestraVersion
     testImplementation group: "io.kestra", name: "runner-memory", version: kestraVersion
     testImplementation group: "io.kestra", name: "storage-local", version: kestraVersion
@@ -96,6 +107,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
     testImplementation "org.hamcrest:hamcrest"
     testImplementation "org.hamcrest:hamcrest-library"
+
+    // Temporal test server (in-process, time-skipping)
+    testImplementation "io.temporal:temporal-testing:1.28.4"
 }
 
 /**********************************************************************************************************************\

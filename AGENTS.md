@@ -2,14 +2,19 @@
 
 ## What
 
-- Provides plugin components under `io.kestra.plugin.temporal`.
-- Includes classes such as `Example`, `Trigger`.
+Provides Kestra tasks for interacting with Temporal workflow orchestration under `io.kestra.plugin.temporal`.
+
+Key task classes:
+- `io.kestra.plugin.temporal.workflow.Trigger`
+- `io.kestra.plugin.temporal.workflow.Signal`
+- `io.kestra.plugin.temporal.workflow.Query`
+- `io.kestra.plugin.temporal.workflow.Wait`
+- `io.kestra.plugin.temporal.workflow.Schedule`
+- `io.kestra.plugin.temporal.AbstractTemporalTask` (shared base)
 
 ## Why
 
-- What user problem does this solve? Teams need a concrete starting point for building and validating new Kestra plugins without recreating the same project scaffolding from scratch.
-- Why would a team adopt this plugin in a workflow? It gives plugin authors a ready-made reference repo they can adapt alongside their own build, test, and publishing workflow.
-- What operational/business outcome does it enable? It shortens plugin delivery time, reduces setup mistakes, and makes internal or partner plugin development more repeatable.
+Teams that use Temporal for workflow orchestration can trigger, signal, query, poll, and schedule Temporal workflows directly from Kestra flows without writing custom code.
 
 ## How
 
@@ -17,29 +22,65 @@
 
 Single-module plugin. Source packages under `io.kestra.plugin`:
 
-- `temporal`
+- `temporal` (shared base, connection and auth)
+- `temporal.workflow` (the five tasks)
 
-Infrastructure dependencies (Docker Compose services):
+All tasks extend `AbstractTemporalTask` which handles gRPC connection and auth (API key + TLS for Temporal Cloud, or mTLS via PEM contents).
 
-- `app`
+The SDK version is `io.temporal:temporal-sdk:1.28.4` (latest version compatible with `protobuf-java:3.25.x` enforced by the Kestra platform BOM at version 1.3.13).
 
 ### Key Plugin Classes
 
-- `io.kestra.plugin.temporal.Example`
+- `io.kestra.plugin.temporal.AbstractTemporalTask` - shared endpoint, namespace, and auth config
+- `io.kestra.plugin.temporal.workflow.Trigger` - starts a Temporal workflow
+- `io.kestra.plugin.temporal.workflow.Signal` - sends a named signal to a running workflow
+- `io.kestra.plugin.temporal.workflow.Query` - queries a workflow and returns JSON result
+- `io.kestra.plugin.temporal.workflow.Wait` - polls DescribeWorkflowExecution until terminal
+- `io.kestra.plugin.temporal.workflow.Schedule` - creates or updates a Temporal schedule
+
+### Test Infrastructure
+
+- Unit tests use `TemporalTestServer` (port-bound in-process Temporal test server) so tasks can connect via TCP.
+- Integration tests for `Schedule` are guarded by `@EnabledIfSystemProperty(named = "temporal.integration.enabled", matches = "true")`. Require a real server via `docker compose -f docker-compose-ci.yml up -d`.
 
 ### Project Structure
 
 ```
 plugin-temporal/
 ├── src/main/java/io/kestra/plugin/temporal/
+│   ├── AbstractTemporalTask.java
+│   ├── package-info.java
+│   └── workflow/
+│       ├── Trigger.java
+│       ├── Signal.java
+│       ├── Query.java
+│       ├── Wait.java
+│       ├── Schedule.java
+│       └── package-info.java
 ├── src/test/java/io/kestra/plugin/temporal/
+│   ├── TemporalTestServer.java
+│   ├── TestWorkflows.java
+│   ├── AbstractTemporalTaskTest.java
+│   └── workflow/
+│       ├── TriggerTest.java
+│       ├── SignalTest.java
+│       ├── QueryTest.java
+│       ├── WaitTest.java
+│       ├── ScheduleTest.java
+│       └── ScheduleValidationTest.java
+├── src/main/resources/icons/
+├── .github/
+│   ├── setup-unit.sh
+│   └── cleanup-unit.sh
 ├── build.gradle
+├── docker-compose-ci.yml
 └── README.md
 ```
 
 ## Local rules
 
-- Base the wording on the implemented packages and classes, not on template README text.
+- Temporal SDK version must stay compatible with the Kestra platform BOM's protobuf version.
+- Do not upgrade `temporal-sdk` beyond what works with `protobuf-java:3.25.x` without also bumping the Kestra platform version.
 
 ## References
 

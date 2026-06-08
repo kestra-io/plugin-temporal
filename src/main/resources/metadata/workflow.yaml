@@ -1,0 +1,8 @@
+group: io.kestra.plugin.temporal.workflow
+name: "workflow"
+title: "Temporal Workflow"
+description: "Tasks that trigger, signal, query, wait for, and schedule Temporal workflows."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"

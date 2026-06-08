@@ -1,8 +1,8 @@
 @PluginSubGroup(
-    title = "Temporal",
-    description = "Interact with Temporal workflow orchestration from Kestra tasks.",
+    title = "Workflow",
+    description = "Trigger, signal, query, wait for, and schedule Temporal workflows.",
     categories = { PluginSubGroup.PluginCategory.INFRASTRUCTURE, PluginSubGroup.PluginCategory.DATA }
 )
-package io.kestra.plugin.temporal;
+package io.kestra.plugin.temporal.workflow;
 
 import io.kestra.core.models.annotations.PluginSubGroup;
