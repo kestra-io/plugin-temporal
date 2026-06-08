@@ -69,9 +69,11 @@ plugin-temporal/
 │       ├── ScheduleTest.java
 │       └── ScheduleValidationTest.java
 ├── src/main/resources/icons/
+├── .github/
+│   ├── setup-unit.sh
+│   └── cleanup-unit.sh
 ├── build.gradle
 ├── docker-compose-ci.yml
-├── setup-unit.sh
 └── README.md
 ```
 
