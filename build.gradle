@@ -49,7 +49,7 @@ dependencies {
     annotationProcessor group: "io.kestra", name: "processor", version: kestraVersion
     compileOnly group: "io.kestra", name: "core", version: kestraVersion
 
-    implementation "io.temporal:temporal-sdk:1.28.4"
+    implementation "io.temporal:temporal-sdk:1.35.0"
 }
 
 
@@ -109,7 +109,7 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-library"
 
     // Temporal test server (in-process, time-skipping)
-    testImplementation "io.temporal:temporal-testing:1.28.4"
+    testImplementation "io.temporal:temporal-testing:1.35.0"
 }
 
 /**********************************************************************************************************************\
