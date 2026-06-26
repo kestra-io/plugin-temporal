@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Wait for a Temporal workflow to reach a terminal state.",
+    title = "Wait for a Temporal workflow to reach a terminal state",
     description = """
         Polls `DescribeWorkflowExecution` at a configurable interval until the workflow
         completes, fails, is canceled, terminated, or times out.
@@ -83,7 +83,7 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
     private static final ObjectMapper MAPPER = JacksonMapper.ofJson();
 
     @Schema(
-        title = "Workflow ID.",
+        title = "Workflow ID",
         description = "The ID of the workflow execution to wait on."
     )
     @NotNull
@@ -91,21 +91,21 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
     private Property<String> workflowId;
 
     @Schema(
-        title = "Run ID.",
+        title = "Run ID",
         description = "Optional. When omitted, waits on the latest run of the given workflow ID."
     )
     @PluginProperty(group = "main")
     private Property<String> runId;
 
     @Schema(
-        title = "Poll interval.",
+        title = "Poll interval",
         description = "How often to check the workflow status. Defaults to 5 seconds."
     )
     @PluginProperty(group = "processing")
     private Property<Duration> pollInterval;
 
     @Schema(
-        title = "Maximum wait time.",
+        title = "Maximum wait time",
         description = """
             Total time to wait before giving up. Defaults to 1 hour.
             Named waitTimeout because timeout is a reserved Kestra task property
@@ -116,7 +116,7 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
     private Property<Duration> waitTimeout;
 
     @Schema(
-        title = "Fail if the workflow ends in a non-COMPLETED state.",
+        title = "Fail if the workflow ends in a non-COMPLETED state",
         description = """
             When true (default), the task throws an exception for FAILED, CANCELED,
             TERMINATED, or TIMED_OUT terminal states.
@@ -238,13 +238,13 @@ public class Wait extends AbstractTemporalTask implements RunnableTask<Wait.Outp
     public static class Output implements io.kestra.core.models.tasks.Output {
 
         @Schema(
-            title = "Workflow terminal status.",
+            title = "Workflow terminal status",
             description = "One of: COMPLETED, FAILED, CANCELED, TERMINATED, TIMED_OUT, CONTINUED_AS_NEW."
         )
         private final String status;
 
         @Schema(
-            title = "Workflow result.",
+            title = "Workflow result",
             description = "JSON-encoded return value of the workflow. Null for non-COMPLETED states."
         )
         private final String result;

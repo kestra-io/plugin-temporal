@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractTemporalTask extends Task {
 
     @Schema(
-        title = "Temporal server endpoint.",
+        title = "Temporal server endpoint",
         description = """
             Host and port of the Temporal frontend service in `host:port` format.
             For Temporal Cloud, use the gRPC endpoint for your namespace,
@@ -56,14 +56,14 @@ public abstract class AbstractTemporalTask extends Task {
     private Property<String> endpoint;
 
     @Schema(
-        title = "Temporal namespace.",
+        title = "Temporal namespace",
         description = "Defaults to `default`. For Temporal Cloud, typically `<namespace>.<accountId>`."
     )
     @PluginProperty(group = "connection")
     private Property<String> namespace;
 
     @Schema(
-        title = "API key for Bearer token authentication.",
+        title = "API key for Bearer token authentication",
         description = """
             Used with Temporal Cloud. Sent as `Authorization: Bearer <apiKey>` on every
             gRPC call; TLS is enabled automatically when this property is set.
@@ -74,7 +74,7 @@ public abstract class AbstractTemporalTask extends Task {
     private Property<String> apiKey;
 
     @Schema(
-        title = "PEM-encoded CA certificate.",
+        title = "PEM-encoded CA certificate",
         description = """
             Verifies the server certificate. Can be used alone for one-way TLS
             with a custom CA, or together with `clientCert`/`clientKey` for mTLS.
@@ -84,14 +84,14 @@ public abstract class AbstractTemporalTask extends Task {
     private Property<String> caCert;
 
     @Schema(
-        title = "PEM-encoded client certificate.",
+        title = "PEM-encoded client certificate",
         description = "Used in mTLS mode. Must be provided together with `clientKey`."
     )
     @PluginProperty(group = "connection", secret = true)
     private Property<String> clientCert;
 
     @Schema(
-        title = "PEM-encoded client private key.",
+        title = "PEM-encoded client private key",
         description = "Used in mTLS mode. Must be provided together with `clientCert`."
     )
     @PluginProperty(group = "connection", secret = true)

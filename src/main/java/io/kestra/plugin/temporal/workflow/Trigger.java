@@ -26,7 +26,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Trigger a Temporal workflow execution.",
+    title = "Trigger a Temporal workflow execution",
     description = """
         Starts a new Temporal workflow and returns its workflow ID and run ID.
         If a workflow with the given ID is already running, the task fails with a
@@ -77,7 +77,7 @@ import java.util.UUID;
 public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigger.Output> {
 
     @Schema(
-        title = "Registered workflow type name.",
+        title = "Registered workflow type name",
         description = "Must match the `@WorkflowMethod` implementation registered on the worker."
     )
     @NotNull
@@ -85,7 +85,7 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
     private Property<String> workflowType;
 
     @Schema(
-        title = "Task queue name.",
+        title = "Task queue name",
         description = "The worker polling this queue will pick up the workflow."
     )
     @NotNull
@@ -93,14 +93,14 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
     private Property<String> taskQueue;
 
     @Schema(
-        title = "Workflow ID.",
+        title = "Workflow ID",
         description = "Optional. A UUID is generated when absent."
     )
     @PluginProperty(group = "main")
     private Property<String> workflowId;
 
     @Schema(
-        title = "Workflow input arguments.",
+        title = "Workflow input arguments",
         description = """
             List of JSON-encoded argument strings, one per workflow parameter.
             Example: `["{\"key\": \"value\"}", "42"]`
@@ -110,7 +110,7 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
     private Property<List<String>> input;
 
     @Schema(
-        title = "Maximum time allowed for the workflow to complete.",
+        title = "Maximum time allowed for the workflow to complete",
         description = "ISO-8601 duration, e.g. `PT1H` for one hour."
     )
     @PluginProperty(group = "main")
@@ -161,10 +161,10 @@ public class Trigger extends AbstractTemporalTask implements RunnableTask<Trigge
     @Getter
     public static class Output implements io.kestra.core.models.tasks.Output {
 
-        @Schema(title = "Workflow ID.", description = "The ID of the started workflow execution.")
+        @Schema(title = "Workflow ID", description = "The ID of the started workflow execution.")
         private final String workflowId;
 
-        @Schema(title = "Run ID.", description = "The unique run ID assigned by Temporal to this execution.")
+        @Schema(title = "Run ID", description = "The unique run ID assigned by Temporal to this execution.")
         private final String runId;
     }
 }
