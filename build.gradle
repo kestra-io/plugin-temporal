@@ -61,8 +61,8 @@ dependencies {
 // gRPC deps in the BOM are built against protobuf 4.x while the BOM pins protobuf-java 3.25.x;
 // force 4.x in the plugin jar to avoid a runtime VerifyError.
 [configurations.testRuntimeClasspath, configurations.runtimeClasspath].each { cfg ->
-    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java:4.33.2"
-    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.33.2"
+    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java:4.35.1"
+    cfg.resolutionStrategy.force "com.google.protobuf:protobuf-java-util:4.35.1"
 }
 
 test {
