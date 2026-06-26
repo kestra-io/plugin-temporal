@@ -24,7 +24,7 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Send a signal to a running Temporal workflow.",
+    title = "Send a signal to a running Temporal workflow",
     description = """
         Sends a named signal with optional arguments to an existing workflow execution.
         The task fails with a clear error if the workflow is not found or has already completed.
@@ -54,7 +54,7 @@ import java.util.Optional;
 public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOutput> {
 
     @Schema(
-        title = "Workflow ID.",
+        title = "Workflow ID",
         description = "The ID of the workflow execution to signal."
     )
     @NotNull
@@ -62,14 +62,14 @@ public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOut
     private Property<String> workflowId;
 
     @Schema(
-        title = "Run ID.",
+        title = "Run ID",
         description = "Optional. When omitted, the signal targets the latest open run of the given workflow ID."
     )
     @PluginProperty(group = "main")
     private Property<String> runId;
 
     @Schema(
-        title = "Signal name.",
+        title = "Signal name",
         description = "Must match the signal handler name registered on the workflow."
     )
     @NotNull
@@ -77,7 +77,7 @@ public class Signal extends AbstractTemporalTask implements RunnableTask<VoidOut
     private Property<String> signalName;
 
     @Schema(
-        title = "Signal arguments.",
+        title = "Signal arguments",
         description = "List of JSON-encoded argument strings, one per signal parameter."
     )
     @PluginProperty(group = "main")

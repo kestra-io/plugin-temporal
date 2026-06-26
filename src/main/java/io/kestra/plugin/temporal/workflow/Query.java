@@ -25,7 +25,7 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Query a running Temporal workflow.",
+    title = "Query a running Temporal workflow",
     description = """
         Sends a named query to a workflow and returns the result as a JSON string.
         The task fails if the workflow is not found or the query handler returns an error.
@@ -53,7 +53,7 @@ import java.util.Optional;
 public class Query extends AbstractTemporalTask implements RunnableTask<Query.Output> {
 
     @Schema(
-        title = "Workflow ID.",
+        title = "Workflow ID",
         description = "The ID of the workflow execution to query."
     )
     @NotNull
@@ -61,14 +61,14 @@ public class Query extends AbstractTemporalTask implements RunnableTask<Query.Ou
     private Property<String> workflowId;
 
     @Schema(
-        title = "Run ID.",
+        title = "Run ID",
         description = "Optional. When omitted, targets the latest open run of the given workflow ID."
     )
     @PluginProperty(group = "main")
     private Property<String> runId;
 
     @Schema(
-        title = "Query type name.",
+        title = "Query type name",
         description = "Must match a registered `@QueryMethod` on the workflow."
     )
     @NotNull
@@ -76,7 +76,7 @@ public class Query extends AbstractTemporalTask implements RunnableTask<Query.Ou
     private Property<String> queryType;
 
     @Schema(
-        title = "Query arguments.",
+        title = "Query arguments",
         description = "List of JSON-encoded argument strings, one per query parameter."
     )
     @PluginProperty(group = "main")
@@ -133,7 +133,7 @@ public class Query extends AbstractTemporalTask implements RunnableTask<Query.Ou
     public static class Output implements io.kestra.core.models.tasks.Output {
 
         @Schema(
-            title = "Query result.",
+            title = "Query result",
             description = "JSON-encoded result returned by the workflow query handler."
         )
         private final String result;

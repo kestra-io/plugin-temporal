@@ -24,7 +24,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Create or update a Temporal schedule.",
+    title = "Create or update a Temporal schedule",
     description = """
         Creates a new Temporal schedule that triggers a workflow on a cron expression or
         fixed interval. If the schedule already exists, the task fails unless `overwrite`
@@ -75,7 +75,7 @@ import java.util.List;
 public class Schedule extends AbstractTemporalTask implements RunnableTask<Schedule.Output> {
 
     @Schema(
-        title = "Schedule ID.",
+        title = "Schedule ID",
         description = "Unique identifier for the schedule within the namespace."
     )
     @NotNull
@@ -83,21 +83,21 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
     private Property<String> scheduleId;
 
     @Schema(
-        title = "Cron expression.",
+        title = "Cron expression",
         description = "Standard 5-field cron, e.g. `0 9 * * *`. Mutually exclusive with `intervalSeconds`."
     )
     @PluginProperty(group = "main")
     private Property<String> cron;
 
     @Schema(
-        title = "Fixed interval in seconds.",
+        title = "Fixed interval in seconds",
         description = "Run the workflow every N seconds. Mutually exclusive with `cron`."
     )
     @PluginProperty(group = "main")
     private Property<Long> intervalSeconds;
 
     @Schema(
-        title = "Workflow type name.",
+        title = "Workflow type name",
         description = "Registered workflow type to execute on each schedule tick."
     )
     @NotNull
@@ -105,7 +105,7 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
     private Property<String> workflowType;
 
     @Schema(
-        title = "Task queue name.",
+        title = "Task queue name",
         description = "The worker polling this queue will execute the scheduled workflow."
     )
     @NotNull
@@ -113,14 +113,14 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
     private Property<String> taskQueue;
 
     @Schema(
-        title = "Workflow input arguments.",
+        title = "Workflow input arguments",
         description = "List of JSON-encoded argument strings passed to each workflow execution."
     )
     @PluginProperty(group = "main")
     private Property<List<String>> args;
 
     @Schema(
-        title = "Overwrite existing schedule.",
+        title = "Overwrite existing schedule",
         description = "When true, updates the schedule if it already exists. Defaults to false."
     )
     @PluginProperty(group = "reliability")
@@ -216,7 +216,7 @@ public class Schedule extends AbstractTemporalTask implements RunnableTask<Sched
     public static class Output implements io.kestra.core.models.tasks.Output {
 
         @Schema(
-            title = "Schedule ID.",
+            title = "Schedule ID",
             description = "The ID of the created or updated schedule."
         )
         private final String scheduleId;
