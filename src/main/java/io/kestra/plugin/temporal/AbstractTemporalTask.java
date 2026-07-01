@@ -70,6 +70,7 @@ public abstract class AbstractTemporalTask extends Task {
             Mutually exclusive with mTLS properties.
             """
     )
+    @ToString.Exclude
     @PluginProperty(group = "connection", secret = true)
     private Property<String> apiKey;
 
@@ -87,6 +88,7 @@ public abstract class AbstractTemporalTask extends Task {
         title = "PEM-encoded client certificate",
         description = "Used in mTLS mode. Must be provided together with `clientKey`."
     )
+    @ToString.Exclude
     @PluginProperty(group = "connection", secret = true)
     private Property<String> clientCert;
 
@@ -94,6 +96,7 @@ public abstract class AbstractTemporalTask extends Task {
         title = "PEM-encoded client private key",
         description = "Used in mTLS mode. Must be provided together with `clientCert`."
     )
+    @ToString.Exclude
     @PluginProperty(group = "connection", secret = true)
     private Property<String> clientKey;
 
