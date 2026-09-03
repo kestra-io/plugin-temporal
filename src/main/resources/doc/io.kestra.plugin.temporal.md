@@ -12,7 +12,7 @@ Three connection modes are supported:
 - **API key (Bearer token)** — set `apiKey`. Used with Temporal Cloud; sent as `Authorization: Bearer <apiKey>` and TLS is enabled automatically. Mutually exclusive with the mTLS properties.
 - **mTLS** — set `clientCert` and `clientKey` (both PEM-encoded; both must be provided together).
 
-Optionally set `caCert` (a PEM-encoded CA certificate) to verify the server certificate — either on its own for one-way TLS with a custom CA, or alongside `clientCert`/`clientKey` for mTLS. Store secrets in [secrets](https://kestra.io/docs/concepts/secret) and apply connection properties globally with [plugin defaults](https://kestra.io/docs/workflow-components/plugin-defaults).
+Optionally set `caCert` (a PEM-encoded CA certificate) to verify the server certificate — either on its own for one-way TLS with a custom CA, or alongside `clientCert`/`clientKey` for mTLS. Store secrets in [secrets](https://kestra.io/docs/concepts/secret) and set connection properties on each task.
 
 ## Tasks
 
